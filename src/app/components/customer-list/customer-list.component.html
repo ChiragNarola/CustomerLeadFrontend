@@ -1,0 +1,64 @@
+<div class="customer-list-container">
+  <div class="header">
+    <h1>Customer List</h1>
+    <p>Manage your customers and upload images for each customer</p>
+  </div>
+
+  <div class="loading" *ngIf="loading">
+    <div class="spinner"></div>
+    <p>Loading customers...</p>
+  </div>
+
+  <div class="error" *ngIf="error">
+    <p>{{ error }}</p>
+    <button (click)="loadCustomers()" class="retry-btn">Retry</button>
+  </div>
+
+  <div class="customers-grid" *ngIf="!loading && !error">
+    <div class="customer-card" *ngFor="let customer of customers">
+      <div class="customer-info">
+        <div class="customer-avatar">
+          <span>{{ customer.name.charAt(0).toUpperCase() }}</span>
+        </div>
+        <div class="customer-details">
+          <h3>{{ customer.name }}</h3>
+          <p class="email">{{ customer.email }}</p>
+          <p class="contact">{{ customer.contactNumber }}</p>
+          <p class="created-date">Created: {{ formatDate(customer.createdAt) }}</p>
+        </div>
+      </div>
+      <div class="customer-actions">
+        <button 
+          class="upload-btn" 
+          (click)="uploadImages(customer)"
+          [attr.aria-label]="'Upload images for ' + customer.name">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M21 15V19C21 19.5304 20.7893 20.0391 20.4142 20.4142C20.0391 20.7893 19.5304 21 19 21H5C4.46957 21 3.96086 20.7893 3.58579 20.4142C3.21071 20.0391 3 19.5304 3 19V15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M17 8L12 3L7 8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M12 3V15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          Upload Images
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="empty-state" *ngIf="!loading && !error && customers.length === 0">
+    <div class="empty-icon">
+      <svg width="64" height="64" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M20 21V19C20 17.9391 19.5786 16.9217 18.8284 16.1716C18.0783 15.4214 17.0609 15 16 15H8C6.93913 15 5.92172 15.4214 5.17157 16.1716C4.42143 16.9217 4 17.9391 4 19V21" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <circle cx="12" cy="7" r="4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
+    <h3>No customers found</h3>
+    <p>There are no customers to display at the moment.</p>
+  </div>
+</div>
+
+<!-- Image Upload Modal -->
+<app-image-upload
+  [customer]="selectedCustomer"
+  [isOpen]="showUploadModal"
+  (close)="closeUploadModal()"
+  (uploadComplete)="onUploadComplete()">
+</app-image-upload>
